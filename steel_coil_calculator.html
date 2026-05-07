@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steel Coil Weight Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .logo {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        
+        .header h1 {
+            color: #4A90E2;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .calculator-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+        
+        .control-section:last-of-type {
+            border-bottom: none;
+        }
+        
+        .control-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4A90E2;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-toggle {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            color: #666;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-toggle:hover {
+            border-color: #4A90E2;
+            background: #f8f9fa;
+        }
+        
+        .btn-toggle.active {
+            background: #4A90E2;
+            color: white;
+            border-color: #4A90E2;
+        }
+        
+        .slider-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .slider-row input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4A90E2;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .slider-row input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4A90E2;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .slider-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4A90E2;
+            min-width: 70px;
+            text-align: right;
+        }
+        
+        .result-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #4A90E2;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+        }
+        
+        .result-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .result-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .settings-btn {
+            width: 100%;
+            padding: 14px;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            color: #4A90E2;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .settings-btn:hover {
+            background: #4A90E2;
+            color: white;
+            border-color: #4A90E2;
+        }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #4A90E2;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-cancel {
+            background: white;
+            border: 2px solid #e0e0e0;
+            color: #666;
+        }
+        
+        .btn-cancel:hover {
+            background: #f8f9fa;
+        }
+        
+        .btn-save {
+            background: #4A90E2;
+            border: 2px solid #4A90E2;
+            color: white;
+        }
+        
+        .btn-save:hover {
+            background: #357abd;
+            border-color: #357abd;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="logo.png" alt="Company Logo" class="logo">
+            <h1>Steel Coil Weight Calculator</h1>
+            <p>Accurate weight calculations for your steel coils</p>
+        </div>
+        
+        <div class="calculator-card">
+            <div class="control-section">
+                <label class="control-label">Select Gauge</label>
+                <div class="button-group">
+                    <button class="btn-toggle active" data-gauge="26">26g</button>
+                    <button class="btn-toggle" data-gauge="24">24g</button>
+                </div>
+            </div>
+            
+            <div class="control-section">
+                <label class="control-label">Select Width</label>
+                <div class="button-group">
+                    <button class="btn-toggle active" data-width="20">20 inches</button>
+                    <button class="btn-toggle" data-width="48">48 inches</button>
+                </div>
+            </div>
+            
+            <div class="control-section">
+                <label class="control-label">Steel Thickness Remaining</label>
+                <div class="slider-container">
+                    <div class="slider-row">
+                        <input type="range" min="0" max="12" step="0.25" value="6" id="thickness">
+                        <span class="slider-value" id="thickness-out">6.00"</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <div class="result-grid">
+                    <div class="result-card">
+                        <div class="result-label">Total Weight</div>
+                        <div class="result-value" id="weight">0 lbs</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Coverage Sq Footage</div>
+                        <div class="result-value" id="square-feet">0 sq ft</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Inner Diameter</div>
+                        <div class="result-value" id="inner-diameter-display">16"</div>
+                    </div>
+                </div>
+                
+                <button class="settings-btn" onclick="openSettings()">⚙ Configure Inner Diameter</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            © 2024 Steel Coil Weight Calculator | Professional Edition
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <h3 class="modal-title">Inner Diameter Settings</h3>
+            <div class="control-section" style="margin-bottom: 0; padding-bottom: 0; border: none;">
+                <label class="control-label">Inner Diameter (Hole)</label>
+                <div class="slider-container">
+                    <div class="slider-row">
+                        <input type="range" min="6" max="24" step="0.5" value="16" id="inner-diameter">
+                        <span class="slider-value" id="inner-diameter-out">16.0"</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
+                <button class="btn-save" onclick="saveSettings()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Load saved inner diameter from localStorage
+        let innerDiameter = parseFloat(localStorage.getItem('steelCoilInnerDiameter')) || 16;
+        document.getElementById('inner-diameter').value = innerDiameter;
+        document.getElementById('inner-diameter-out').textContent = innerDiameter.toFixed(1) + '"';
+        document.getElementById('inner-diameter-display').textContent = innerDiameter.toFixed(1) + '"';
+        
+        // Gauge weights (lbs per sq ft), thickness (inches), and coverage factor
+        const gaugeData = {
+            24: { weight: 1.0, thickness: 0.024, coverageFactor: 1.3 },
+            26: { weight: 0.78, thickness: 0.020, coverageFactor: 1.0 }
+        };
+        
+        let selectedGauge = 26;
+        let selectedWidth = 20;
+        
+        // Toggle button handlers
+        document.querySelectorAll('[data-gauge]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('[data-gauge]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedGauge = parseInt(btn.dataset.gauge);
+                calculate();
+            });
+        });
+        
+        document.querySelectorAll('[data-width]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('[data-width]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedWidth = parseInt(btn.dataset.width);
+                calculate();
+            });
+        });
+        
+        // Slider handlers
+        document.getElementById('thickness').addEventListener('input', (e) => {
+            document.getElementById('thickness-out').textContent = parseFloat(e.target.value).toFixed(2) + '"';
+            calculate();
+        });
+        
+        document.getElementById('inner-diameter').addEventListener('input', (e) => {
+            document.getElementById('inner-diameter-out').textContent = parseFloat(e.target.value).toFixed(1) + '"';
+        });
+        
+        // Settings modal
+        function openSettings() {
+            document.getElementById('modal').style.display = 'flex';
+        }
+        
+        function closeSettings() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('inner-diameter').value = innerDiameter;
+            document.getElementById('inner-diameter-out').textContent = innerDiameter.toFixed(1) + '"';
+        }
+        
+        function saveSettings() {
+            innerDiameter = parseFloat(document.getElementById('inner-diameter').value);
+            localStorage.setItem('steelCoilInnerDiameter', innerDiameter);
+            document.getElementById('inner-diameter-display').textContent = innerDiameter.toFixed(1) + '"';
+            document.getElementById('modal').style.display = 'none';
+            calculate();
+        }
+        
+        // Weight calculation
+        function calculate() {
+            const thicknessRemaining = parseFloat(document.getElementById('thickness').value);
+            const outerDiameter = innerDiameter + (2 * thicknessRemaining);
+            
+            const gauge = gaugeData[selectedGauge];
+            
+            // Calculate total length of steel using coil formula
+            // Length = π × (OD + ID) × (OD - ID) / (2 × thickness per wrap)
+            const lengthInches = Math.PI * (outerDiameter + innerDiameter) * (outerDiameter - innerDiameter) / (2 * gauge.thickness);
+            const lengthFeet = lengthInches / 12;
+            
+            // Calculate total surface area
+            const widthFeet = selectedWidth / 12;
+            const totalAreaSqFt = lengthFeet * widthFeet;
+            
+            // Calculate weight
+            const totalWeight = totalAreaSqFt * gauge.weight;
+            
+            // Calculate coverage square footage using the coverage factor
+            const coverageSqFt = totalWeight / gauge.coverageFactor;
+            
+            document.getElementById('weight').textContent = Math.round(totalWeight).toLocaleString() + ' lbs';
+            document.getElementById('square-feet').textContent = Math.round(coverageSqFt).toLocaleString() + ' sq ft';
+        }
+        
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>
